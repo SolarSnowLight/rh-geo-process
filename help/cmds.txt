@@ -1,0 +1,11 @@
+1. 
+[CMD]: migrate create -ext sql -dir db/migrations -seq create_users_table
+[DESCRIPTION]: Создание нового файла для осуществления миграций
+
+2.
+[CMD]: swag init -g cmd/main.go
+[DESCRIPTION]: Автоматическая генерация веб-документации к API                                          
+
+3.
+[CMD]: powershell ".\init-packages.ps1" -separator "`;" -path '.\requirements.go.txt'
+[DESCRIPTION]: Автоматическая загрузка всех зависимостей, перечисленных в файле в виде списка
