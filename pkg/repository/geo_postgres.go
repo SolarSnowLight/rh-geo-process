@@ -30,6 +30,8 @@ func (r *GeoPostgres) AddRegionList(list []model.RegionDB) ([]model.RegionDB, er
 		return nil, err
 	}
 
+	r.db.Model(&model.RegionDB{}).Where("name = ?", "Владикавказ").Update("name", "Северная Осетия")
+
 	return list, nil
 }
 
@@ -95,3 +97,11 @@ func (r *GeoPostgres) AddCityList(filepath string, regionCity []model.RegionCity
 
 	return nil
 }
+
+/*
+SELECT c.name AS city_name, r.name AS region_name FROM cities_regions cr
+INNER JOIN regions_centers rc ON rc.cities_regions_id = cr.id
+INNER JOIN regions r ON r.id = cr.regions_id
+INNER JOIN cities c ON c.id = cr.cities_id
+ORDER BY r.id;
+*/

@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	mainServer "geo-process"
 	initConfigure "geo-process/config"
 	"geo-process/pkg/handler"
-	model "geo-process/pkg/model"
+	"geo-process/pkg/model"
 	"geo-process/pkg/repository"
 	"geo-process/pkg/service"
 	"os"
@@ -13,8 +14,8 @@ import (
 	"syscall"
 
 	_ "github.com/lib/pq"
-
 	"github.com/samber/lo"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/subosito/gotenv"
@@ -83,18 +84,24 @@ func main() {
 
 	logrus.Print("Geo process service started")
 
-	// Парсим данные со страницы википедии
-	resParse := initConfigure.ParseSubjects()
+	if os.Getenv("INIT_GEO") == "y" {
+		// Парсим данные со страницы википедии
+		resParse := initConfigure.ParseSubjects()
 
-	// Добавление регионов (при условии, что они не были добавлены ранее)
-	repos.AddRegionList(lo.Map(resParse, func(x model.RegionCityModel, index int) model.RegionDB {
-		return model.RegionDB{
-			Name: x.Region,
+		for _, item := range resParse {
+			fmt.Printf("%s;%s\n", item.Region, item.City)
 		}
-	}))
 
-	// Добавление городов РФ (при условии, что они не были добавлены ранее)
-	// repos.AddCityList(viper.GetString("paths.cities"), resParse)
+		// Добавление регионов (при условии, что они не были добавлены ранее)
+		repos.AddRegionList(lo.Map(resParse, func(x model.RegionCityModel, index int) model.RegionDB {
+			return model.RegionDB{
+				Name: x.Region,
+			}
+		}))
+
+		// Добавление городов РФ (при условии, что они не были добавлены ранее)
+		repos.AddCityList(viper.GetString("paths.cities"), resParse)
+	}
 
 	// Блокировка функции main
 	quit := make(chan os.Signal, 1)

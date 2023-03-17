@@ -7,7 +7,7 @@ type RegionCityModel struct {
 
 func CityIsCenter(city CityModel, regionList []RegionCityModel) bool {
 	for _, item := range regionList {
-		if item.City == city.Name {
+		if (item.Region == city.Subject) && (item.City == city.Name) {
 			return true
 		}
 	}
@@ -16,6 +16,7 @@ func CityIsCenter(city CityModel, regionList []RegionCityModel) bool {
 }
 
 type CityModel struct {
+	Id     uint `json:"id"`
 	Coords struct {
 		Lat string `json:"lat"`
 		Lon string `json:"lon"`
@@ -28,6 +29,7 @@ type CityModel struct {
 
 func (cm *CityModel) ConvertToDB() *CityDB {
 	return &CityDB{
+		Id:         cm.Id,
 		Lat:        cm.Coords.Lat,
 		Lng:        cm.Coords.Lon,
 		Name:       cm.Name,

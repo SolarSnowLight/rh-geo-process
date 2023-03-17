@@ -8,6 +8,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
+	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/writer"
 	"github.com/spf13/viper"
@@ -88,12 +89,24 @@ func ParseSubjects() []model.RegionCityModel {
 				lenChildren := len(s.Children().Find("span.nowrap").Nodes)
 				if (len(s.Children().Nodes) == 6) && (s.Children().Get(0).Data == "td") && (lenChildren >= 1) {
 					var text []string
+
 					s.Find("td > span.nowrap").Each(func(i int, s *goquery.Selection) {
 						text = append(text, strings.TrimSpace(s.Text()))
 					})
 					s.Find("td > a").Each(func(i int, s *goquery.Selection) {
 						text = append(text, strings.TrimSpace(s.Text()))
 					})
+
+					text = lo.Filter(text, func(x string, index int) bool {
+						return len(x) > 0
+					})
+
+					if text[0] == "Владикавказ" {
+						a, b := text[len(text)-1], text[0]
+						text[len(text)-1] = b
+						text[0] = a
+					}
+
 					result = append(result, model.RegionCityModel{
 						Region: text[0],
 						City:   text[len(text)-1],
