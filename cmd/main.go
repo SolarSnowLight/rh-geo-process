@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	mainServer "geo-process"
 	initConfigure "geo-process/config"
 	"geo-process/pkg/handler"
@@ -21,9 +20,9 @@ import (
 	"github.com/subosito/gotenv"
 )
 
-// @title Rental Housing
+// @title Сервис обработки географических данных
 // @version 1.0
-// description Проект для аренды жилья
+// description Сервис обработки географических данных
 
 // @host localhost:5001
 // @BasePath /
@@ -82,15 +81,11 @@ func main() {
 		}
 	}()
 
-	logrus.Print("Geo process service started")
+	logrus.Printf("Geo process service started on port: %s", viper.GetString("port"))
 
 	if os.Getenv("INIT_GEO") == "y" {
 		// Парсим данные со страницы википедии
 		resParse := initConfigure.ParseSubjects()
-
-		for _, item := range resParse {
-			fmt.Printf("%s;%s\n", item.Region, item.City)
-		}
 
 		// Добавление регионов (при условии, что они не были добавлены ранее)
 		repos.AddRegionList(lo.Map(resParse, func(x model.RegionCityModel, index int) model.RegionDB {
@@ -103,12 +98,15 @@ func main() {
 		repos.AddCityList(viper.GetString("paths.cities"), resParse)
 	}
 
-	// Блокировка функции main
+	// Реализация Graceful Shutdown
+	// Блокировка функции main с помощью канала os.Signal
 	quit := make(chan os.Signal, 1)
 
-	// запись в канал
+	// Запись в канал, если процесс, в котором выполняется приложение
+	// получит сигнал SIGTERM или SIGINT
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
+	// Чтение из канала, блокирующая выполнение функции main
 	<-quit
 
 	logrus.Print("Geo process service shutting down")

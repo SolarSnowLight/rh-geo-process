@@ -4,9 +4,12 @@ import (
 	routeConstant "geo-process/pkg/constant"
 	"geo-process/pkg/service"
 
+	_ "geo-process/docs"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	_ "github.com/swaggo/files"
 	swaggerFiles "github.com/swaggo/files"
 	_ "github.com/swaggo/gin-swagger"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -38,7 +41,22 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	// URL: /swagger/index.html
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	router.GET(routeConstant.REGION+routeConstant.GET_ALL, h.RegionGetAll)
+	// URL: /region
+	region := router.Group(routeConstant.REGION, h.userIdentity)
+	{
+		// URL: /region/get/all
+		region.GET(routeConstant.GET_ALL, h.RegionGetAll)
+	}
+
+	// URL: /city
+	city := router.Group(routeConstant.CITY, h.userIdentity)
+	{
+		// URL: /city/get/all/:region_id
+		city.GET(routeConstant.GET_ALL+routeConstant.REGION_ID, h.CityGetAllByRegion)
+
+		// URL: /city/get/all
+		city.GET(routeConstant.GET_ALL, h.CityGetAll)
+	}
 
 	return router
 }

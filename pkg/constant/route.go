@@ -6,5 +6,7 @@ const (
 	CREATE  = "/create"
 	UPDATE  = "/update"
 
-	REGION = "/region"
+	REGION    = "/region"
+	CITY      = "/city"
+	REGION_ID = "/:region_id"
 )

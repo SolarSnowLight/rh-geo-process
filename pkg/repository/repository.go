@@ -7,9 +7,10 @@ import (
 )
 
 type Geo interface {
-	GetRegionAll() ([]model.RegionDB, error)
+	GetRegionAll() ([]model.RegionModel, error)
+	GetCitiesByRegion(regionid int) ([]model.CityDataModel, error)
+	GetCities() ([]model.CityDataModel, error)
 	AddRegionList(list []model.RegionDB) ([]model.RegionDB, error)
-
 	AddCityList(filepath string, regionCity []model.RegionCityModel) error
 }
 

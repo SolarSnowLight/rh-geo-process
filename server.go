@@ -6,22 +6,21 @@ import (
 	"time"
 )
 
-/* Структура HTTP-сервера */
+/* Структура сервера */
 type Server struct {
 	httpServer *http.Server
 }
 
-/* Метод запуска сервера */
+/* Метод для запуска сервера с текущими настройками */
 func (s *Server) Run(port string, handler http.Handler) error {
 	s.httpServer = &http.Server{
-		Addr:           ":" + port,       // Адрес, по которому работает сервер
-		Handler:        handler,          // Обработчики маршрутов
-		MaxHeaderBytes: 1 << 20,          // Максимальный размер байт заголовка запроса
-		ReadTimeout:    10 * time.Second, // Время чтения ответа на запрос
-		WriteTimeout:   10 * time.Second, // Время записи запроса
+		Addr:           ":" + port,
+		Handler:        handler,
+		MaxHeaderBytes: 1 << 20, // 1 MB
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 	}
 
-	// Начало прослушивания по определённому порту и обработка запросов
 	return s.httpServer.ListenAndServe()
 }
 

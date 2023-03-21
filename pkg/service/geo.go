@@ -1,7 +1,7 @@
 package service
 
 import (
-	geoModel "geo-process/pkg/model"
+	"geo-process/pkg/model"
 	"geo-process/pkg/repository"
 )
 
@@ -15,6 +15,14 @@ func NewGeoService(repo repository.Geo) *GeoService {
 	}
 }
 
-func (s *GeoService) GetRegionAll() ([]geoModel.RegionDB, error) {
-	return s.GetRegionAll()
+func (s *GeoService) GetRegionAll() ([]model.RegionModel, error) {
+	return s.repo.GetRegionAll()
+}
+
+func (s *GeoService) GetCitiesByRegion(regionId int) ([]model.CityDataModel, error) {
+	return s.repo.GetCitiesByRegion(regionId)
+}
+
+func (s *GeoService) GetCities() ([]model.CityDataModel, error) {
+	return s.repo.GetCities()
 }

@@ -1,12 +1,14 @@
 package service
 
 import (
-	geoModel "geo-process/pkg/model"
+	"geo-process/pkg/model"
 	"geo-process/pkg/repository"
 )
 
 type Geo interface {
-	GetRegionAll() ([]geoModel.RegionDB, error)
+	GetRegionAll() ([]model.RegionModel, error)
+	GetCitiesByRegion(regionId int) ([]model.CityDataModel, error)
+	GetCities() ([]model.CityDataModel, error)
 }
 
 type Service struct {
